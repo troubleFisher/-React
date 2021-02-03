@@ -1,19 +1,25 @@
 import FieldContext from "./FieldContext";
-import { useEffect, useContext, cloneElement, useRef, useImperativeHandle, forceUpdate } from "react";
-// todo 如何获取function实例
-const Field = ({ children, name }) => {
+import { useEffect, useContext, cloneElement, useRef, useImperativeHandle, useState, useCallback } from "react";
+
+const Field = (props) => {
+  const { children, name } = props;
   const form = useContext(FieldContext);
   const ref = useRef();
+  const [, updateState] = useState();
+  const forceUpdate = useCallback(() => updateState({}), []);
 
+  useImperativeHandle(ref, () => ({
+    props,
+    onStoreChange
+  }))
 
   useEffect(() => {
     const { registerField } = form;
-    registerField(ref.current);
+    const unregisterField = registerField(ref.current);
+    return () => {
+      unregisterField()
+    }
   }, []);
-
-  useImperativeHandle(ref, () =>
-    onStoreChange
-  )
 
   const onStoreChange = () => {
     forceUpdate();
@@ -35,3 +41,4 @@ const Field = ({ children, name }) => {
 };
 
 export default Field;
+

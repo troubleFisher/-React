@@ -1,5 +1,6 @@
 import FieldContext from "./FieldContext";
-const Form = ({ children, form }) => {
+const Form = ({ children, form, onFinish, onFinishFailed }) => {
+  form.setCallBack({ onFinish, onFinishFailed })
   return (
     <FieldContext.Provider value={form}>
       <form
