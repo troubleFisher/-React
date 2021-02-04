@@ -1,12 +1,17 @@
 import FieldContext from "./FieldContext";
-const Form = ({ children, form, onFinish, onFinishFailed }) => {
-  form.setCallBack({ onFinish, onFinishFailed })
+import useForm from './UseForm'
+import { useImperativeHandle } from 'react'
+const Form = ({ children, form, onFinish, onFinishFailed }, ref) => {
+  // 兼容class
+  const [formInstance] = useForm(form)
+  useImperativeHandle(ref, () => formInstance)
+  formInstance.setCallBack({ onFinish, onFinishFailed })
   return (
-    <FieldContext.Provider value={form}>
+    <FieldContext.Provider value={formInstance}>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          form.submit();
+          formInstance.submit();
         }}
       >
         {children}
